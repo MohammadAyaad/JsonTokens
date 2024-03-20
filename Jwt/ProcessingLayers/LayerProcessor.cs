@@ -35,11 +35,4 @@ namespace Jwt.ProcessingLayers
             return JwtToken.FromString(token, secret);
         }
     }
-
-
-    public interface IJwtTokenProcessorLayer
-    {
-        (string token, string secret) ToString(string input, string secret);
-        (string token, string secret) FromString(string token, string secret);
-    }
 }
