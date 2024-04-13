@@ -5,9 +5,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Jwt.ProcessingLayers
+namespace JsonTokens.ProcessingLayers
 {
-    public class EncryptTokenLayer : IJwtTokenProcessorLayer
+    public class EncryptTokenLayer : ITokenProcessorLayer
     {
         public (string token, string secret) ToString(string input, string secret)
 
@@ -19,7 +19,7 @@ namespace Jwt.ProcessingLayers
             return (token, secret);
         }
 
-        (string token, string secret) IJwtTokenProcessorLayer.FromString(string token, string secret)
+        (string token, string secret) ITokenProcessorLayer.FromString(string token, string secret)
         {
             (string encryptedString, string encryptionKey) = Encrypt(token);
 
@@ -32,11 +32,11 @@ namespace Jwt.ProcessingLayers
 
         private static string MakeSecret(string secretKey, string encryptionKey)
         {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{secretKey}:{encryptionKey}"));
+            return Base64Converter.ToBase64String(Encoding.UTF8.GetBytes($"{secretKey}:{encryptionKey}"));
         }
         internal static (string secretKey, string encryptionKey) ParseSecret(string secret)
         {
-            string[] keys = Encoding.UTF8.GetString(Convert.FromBase64String(secret)).Split(':');
+            string[] keys = Encoding.UTF8.GetString(Base64Converter.FromBase64String(secret)).Split(':');
             //WARNING: if the keys.length exceeds 2 elements , there is an error or the data got edited by 
             return (keys[0], $"{keys[1]}:{keys[2]}");
         }
@@ -65,9 +65,9 @@ namespace Jwt.ProcessingLayers
                             swEncrypt.Write(plainText);
                         }
                         var encryptedBytes = msEncrypt.ToArray();
-                        var encryptedString = Convert.ToBase64String(encryptedBytes);
-                        var secretKey = Convert.ToBase64String(aes.Key);
-                        var iv = Convert.ToBase64String(aes.IV);
+                        var encryptedString = Base64Converter.ToBase64String(encryptedBytes);
+                        var secretKey = Base64Converter.ToBase64String(aes.Key);
+                        var iv = Base64Converter.ToBase64String(aes.IV);
 
                         string secret = $"{secretKey}:{iv}";
 
@@ -78,10 +78,10 @@ namespace Jwt.ProcessingLayers
         }
         private static string Decrypt(string encryptedString, string encryptionKey)
         {
-            var encryptedBytes = Convert.FromBase64String(encryptedString);
+            var encryptedBytes = Base64Converter.FromBase64String(encryptedString);
             string[] keys = encryptionKey.Split(':');
-            var key = Convert.FromBase64String(keys[0]);
-            var iv = Convert.FromBase64String(keys[1]);
+            var key = Base64Converter.FromBase64String(keys[0]);
+            var iv = Base64Converter.FromBase64String(keys[1]);
 
             using (var aes = new AesCryptoServiceProvider())
             {
@@ -110,7 +110,7 @@ namespace Jwt.ProcessingLayers
                 byte[] secretKey = new byte[32]; // 256 bits
                 rng.GetBytes(secretKey);
 
-                var secretKeyBase64 = Convert.ToBase64String(secretKey);
+                var secretKeyBase64 = Base64Converter.ToBase64String(secretKey);
 
                 return secretKey;
             }
