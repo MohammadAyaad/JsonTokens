@@ -10,16 +10,16 @@ namespace JsonTokens.Components
     {
         public LifeTime(long validAt, long expiresAt)
         {
-            ValidAt = validAt;
+            ValidFrom = validAt;
             ExpiresAt = expiresAt;
         }
 
-        public long ValidAt { get; }
+        public long ValidFrom { get; }
         public long ExpiresAt { get; }
         public bool IsValid()
         {
             long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            return ((now > ValidAt) && (now < ExpiresAt));
+            return ((now > ValidFrom) && (now < ExpiresAt));
         }
         public bool IsExpired()
         {
