@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace JsonTokens.Components
 {
-    public class Sequential
+    public class SequenceTracker
     {
         private byte[] sid;
         private byte[] ssi;
@@ -23,7 +23,7 @@ namespace JsonTokens.Components
         public long SQI { get { return sqi; } private set { sqi = value; } }
         public long MLEN { get { return mlen; } private set { mlen = value; } }
         [JsonConstructor]
-        private Sequential(byte[] sid, byte[] ssi, long sqi,long max_length)
+        private SequenceTracker(byte[] sid, byte[] ssi, long sqi,long max_length)
         {
             this.sid = sid;
             this.ssi = ssi;
@@ -35,7 +35,7 @@ namespace JsonTokens.Components
             byte[] shasid = SHA256.HashData(sid);
             ssi = GenerateSsi(sid, shasid, ssi);
         }
-        public static Sequential GenerateSequence(long max_length)
+        public static SequenceTracker GenerateSequence(long max_length)
         {
             byte[] sid = RandomNumberGenerator.GetBytes(64);
             byte[] shasid = SHA256.HashData(sid);
@@ -44,7 +44,7 @@ namespace JsonTokens.Components
             for (int i = 0; i < ssi.Length; i++) ssi[i] = 0;
             ssi = GenerateSsi(sid, shasid, ssi);
             long fsqi = 0;
-            return new Sequential(sid, ssi, fsqi, max_length);
+            return new SequenceTracker(sid, ssi, fsqi, max_length);
         }
         public bool AuthenticateSequence()
         {
