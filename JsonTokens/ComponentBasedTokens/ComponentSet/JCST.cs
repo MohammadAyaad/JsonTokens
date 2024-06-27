@@ -51,6 +51,11 @@ namespace JsonTokens.ComponentBasedTokens.ComponentSet
         {
             com.Add(typeof(T).FullName, component);
         }
+
+        public bool ContainsComponent<T>()
+        {
+            return com.ContainsKey(typeof(T).FullName);
+        }
         public T GetComponent<T>()
         {
             if (com.ContainsKey(typeof(T).FullName))
