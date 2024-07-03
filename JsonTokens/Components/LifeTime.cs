@@ -8,9 +8,9 @@ namespace JsonTokens.Components
 {
     public class LifeTime
     {
-        public LifeTime(long validAt, long expiresAt)
+        public LifeTime(long validFrom, long expiresAt)
         {
-            ValidFrom = validAt;
+            ValidFrom = validFrom;
             ExpiresAt = expiresAt;
         }
 
